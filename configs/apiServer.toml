@@ -1,2 +1,7 @@
 addr = ":3030"
 logLevel = "debug"
+
+[store]
+databaseType = "postgres"
+databaseURL = "host=localhost dbname=dev-RESTAPISample user=devUser password=devUser sslmode=disable"
+

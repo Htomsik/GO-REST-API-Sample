@@ -1,6 +1,7 @@
 package apiServer
 
 import (
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -12,6 +13,7 @@ type APIServer struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
+	store  *store.Store
 }
 
 // New ...
@@ -32,6 +34,10 @@ func (api *APIServer) Start() error {
 
 	api.configureRouter()
 
+	if err := api.configureStore(); err != nil {
+		return err
+	}
+
 	api.logger.Info("API server starting")
 
 	return http.ListenAndServe(api.config.Addr, api.router)
@@ -51,6 +57,18 @@ func (api *APIServer) configureLogger() error {
 
 func (api *APIServer) configureRouter() {
 	api.router.HandleFunc("/hello", api.handleHello())
+}
+
+func (api *APIServer) configureStore() error {
+	st := store.New(api.config.Store)
+
+	if err := st.Open(); err != nil {
+		return err
+	}
+
+	api.store = st
+
+	return nil
 }
 
 func (api *APIServer) handleHello() http.HandlerFunc {
