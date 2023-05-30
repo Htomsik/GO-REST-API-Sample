@@ -17,7 +17,10 @@ func Start(config *Config) error {
 	defer db.Close()
 	store := sqlStore.New(db)
 	srv := newServer(store)
-	return http.ListenAndServe(config.Addr, srv)
+
+	srv.logger.Infof("Server started on port %v", config.Port)
+
+	return http.ListenAndServe(config.Port, srv)
 }
 
 // newDB ...
