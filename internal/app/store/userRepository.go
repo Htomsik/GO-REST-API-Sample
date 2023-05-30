@@ -9,6 +9,10 @@ type UserRepository struct {
 
 // Add ...
 func (repository *UserRepository) Add(user *model.User) (*model.User, error) {
+	if err := user.Validate(); err != nil {
+		return nil, err
+	}
+
 	if err := user.BeforeAdd(); err != nil {
 		return nil, err
 	}

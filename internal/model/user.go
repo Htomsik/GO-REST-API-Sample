@@ -1,6 +1,10 @@
 package model
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	val "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+	"golang.org/x/crypto/bcrypt"
+)
 
 // User ...
 type User struct {
@@ -8,6 +12,15 @@ type User struct {
 	Email             string
 	Password          string
 	EncryptedPassword string
+}
+
+// Validate ...
+func (user *User) Validate() error {
+	return val.ValidateStruct(
+		user,
+		val.Field(&user.Email, val.Required, is.Email),
+		val.Field(&user.Password, val.By(requiredIf(user.EncryptedPassword == "")), val.Length(6, 100)),
+	)
 }
 
 // BeforeAdd ...
