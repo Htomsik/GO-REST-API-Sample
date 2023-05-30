@@ -1,32 +1,34 @@
-package store_test
+package testStore_test
 
 import (
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/testStore"
+
 	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestUserRepository_Add(t *testing.T) {
-	st, teardown := store.TestStore(t, databaseType, databaseURL)
-	defer teardown("users")
+	st := testStore.New()
 
-	user, err := st.User().Add(model.TestUser(t))
+	user := model.TestUser(t)
+	err := st.User().Add(user)
 
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
+	assert.NotZero(t, user.ID)
 }
 
 func TestUserRepository_FindByEmail(t *testing.T) {
-	st, teardown := store.TestStore(t, databaseType, databaseURL)
-	defer teardown("users")
+	st := testStore.New()
 
+	// Проверка на то что не находит рандом юзера
 	email := "user@ex.com"
-
 	_, err := st.User().FindByEmail(email)
 
-	assert.Error(t, err)
+	assert.EqualError(t, err, store.RecordNotFound.Error())
 
+	// Создание + Провекра на то что находит юзера
 	user := model.TestUser(t)
 	user.Email = email
 
