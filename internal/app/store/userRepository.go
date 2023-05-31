@@ -1,6 +1,8 @@
 package store
 
-import "github.com/Htomsik/GO-REST-API-Sample/internal/model"
+import (
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
+)
 
 // UserRepository ...
 type UserRepository interface {

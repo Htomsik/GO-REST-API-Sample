@@ -1,7 +1,7 @@
 package model_test
 
 import (
-	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
+	model2 "github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,13 +11,13 @@ func TestUser_Validate(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		user    func() *model.User
+		user    func() *model2.User
 		IsValid bool
 	}{
 		{
 			name: "valid",
-			user: func() *model.User {
-				return model.TestUser(t)
+			user: func() *model2.User {
+				return model2.TestUser(t)
 			},
 			IsValid: true,
 		},
@@ -25,8 +25,8 @@ func TestUser_Validate(t *testing.T) {
 		// Email cases
 		{
 			name: "invalid email",
-			user: func() *model.User {
-				us := model.TestUser(t)
+			user: func() *model2.User {
+				us := model2.TestUser(t)
 
 				us.Email = "NoEmail"
 
@@ -36,8 +36,8 @@ func TestUser_Validate(t *testing.T) {
 		},
 		{
 			name: "empty email",
-			user: func() *model.User {
-				us := model.TestUser(t)
+			user: func() *model2.User {
+				us := model2.TestUser(t)
 
 				us.Email = ""
 
@@ -49,8 +49,8 @@ func TestUser_Validate(t *testing.T) {
 		// Password cases
 		{
 			name: "empty password",
-			user: func() *model.User {
-				us := model.TestUser(t)
+			user: func() *model2.User {
+				us := model2.TestUser(t)
 
 				us.Password = ""
 
@@ -60,8 +60,8 @@ func TestUser_Validate(t *testing.T) {
 		},
 		{
 			name: "short password",
-			user: func() *model.User {
-				us := model.TestUser(t)
+			user: func() *model2.User {
+				us := model2.TestUser(t)
 
 				us.Password = "12345"
 
@@ -71,8 +71,8 @@ func TestUser_Validate(t *testing.T) {
 		},
 		{
 			name: "with encrypted password",
-			user: func() *model.User {
-				us := model.TestUser(t)
+			user: func() *model2.User {
+				us := model2.TestUser(t)
 
 				us.Password = ""
 
@@ -97,7 +97,7 @@ func TestUser_Validate(t *testing.T) {
 
 // TestUser_BeforeAdd ...
 func TestUser_BeforeAdd(t *testing.T) {
-	user := model.TestUser(t)
+	user := model2.TestUser(t)
 
 	assert.NoError(t, user.BeforeAdd())
 	assert.NotEmpty(t, user.EncryptedPassword)

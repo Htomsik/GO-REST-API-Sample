@@ -3,8 +3,8 @@ package apiServer
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/testStore"
-	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 	"net/http"

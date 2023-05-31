@@ -1,8 +1,8 @@
 package testStore
 
 import (
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
-	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 )
 
 // Store ...

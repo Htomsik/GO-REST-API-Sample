@@ -2,8 +2,7 @@ package apiServer
 
 import (
 	"encoding/json"
-	"github.com/Htomsik/GO-REST-API-Sample/internal/app"
-	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
 	"net/http"
 )
 
@@ -60,7 +59,7 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 		// Find user
 		user, err := srv.store.User().FindByEmail(req.Email)
 		if err != nil || !user.ComparePassword(req.Password) {
-			srv.error(w, r, http.StatusUnauthorized, app.EmailOrPasswordIncorrect)
+			srv.error(w, r, http.StatusUnauthorized, model.EmailOrPasswordIncorrect)
 			return
 		}
 
