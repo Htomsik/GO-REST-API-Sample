@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	sessionName = "GO-REST-API-Sample"
+	sessionName        = "GO-REST-API-Sample"
+	userIdSessionValue = "userId"
 )
 
 // handleUsersAdd Add new user
@@ -69,7 +70,7 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 			srv.error(w, r, http.StatusInternalServerError, err)
 		}
 
-		session.Values["userId"] = user.ID
+		session.Values[userIdSessionValue] = user.ID
 
 		// Add user session into sessions store
 		if err = srv.sessionStore.Save(r, w, session); err != nil {

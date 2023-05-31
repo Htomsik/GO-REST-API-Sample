@@ -9,20 +9,23 @@ import (
 )
 
 func TestUserRepository_Add(t *testing.T) {
+	// Arrange
 	st := testStore.New()
-
 	user := model.TestUser(t)
+
+	// Act
 	err := st.User().Add(user)
 
+	// Assert
 	assert.NoError(t, err)
 	assert.NotZero(t, user.ID)
 }
 
 func TestUserRepository_FindByEmailNotAdded(t *testing.T) {
-	// Act
+	// Arrange
 	st := testStore.New()
 
-	// Arrange
+	// Act
 	_, err := st.User().FindByEmail("user@ex.com")
 
 	// Assert
@@ -30,13 +33,13 @@ func TestUserRepository_FindByEmailNotAdded(t *testing.T) {
 }
 
 func TestUserRepository_FindByEmailAdded(t *testing.T) {
-	// Act
+	// Arrange
 	st := testStore.New()
 	email := "user@ex.com"
 	user := model.TestUser(t)
 	user.Email = email
 
-	// Arrange
+	// Act
 	st.User().Add(user)
 	user, err := st.User().FindByEmail(email)
 
@@ -46,10 +49,10 @@ func TestUserRepository_FindByEmailAdded(t *testing.T) {
 }
 
 func TestUserRepository_FindNotAdded(t *testing.T) {
-	// Act
+	// Arrange
 	st := testStore.New()
 
-	// Arrange
+	// Act
 	_, err := st.User().Find(0)
 
 	// Assert
@@ -57,11 +60,11 @@ func TestUserRepository_FindNotAdded(t *testing.T) {
 }
 
 func TestUserRepository_FindAdded(t *testing.T) {
-	// Act
+	// Arrange
 	st := testStore.New()
 	user := model.TestUser(t)
 
-	// Arrange
+	// Act
 	st.User().Add(user)
 	user, err := st.User().Find(user.ID)
 

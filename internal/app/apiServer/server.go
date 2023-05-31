@@ -9,6 +9,12 @@ import (
 	"net/http"
 )
 
+const (
+	usersEndpoint    = "/users"
+	sessionsEndpoint = "/sessions"
+	homeEndpoint     = "/"
+)
+
 // server ...
 type server struct {
 	router       *mux.Router
@@ -32,8 +38,8 @@ func newServer(store store.Store, sessionStore sessions.Store) *server {
 }
 
 func (srv *server) configureRouter() {
-	srv.router.HandleFunc("/users", srv.handleUsersAdd()).Methods(http.MethodPost)
-	srv.router.HandleFunc("/sessions", srv.handleSessionsAdd()).Methods(http.MethodPost)
+	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
+	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
