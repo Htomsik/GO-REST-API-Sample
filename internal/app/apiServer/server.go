@@ -49,7 +49,10 @@ func (srv *server) configureRouter() {
 	srv.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 
 	// Add requestID for all endpoints
-	srv.router.Use(srv.setRequestIDMiddleWare)
+	srv.router.Use(srv.requestIDMiddleWare)
+
+	// Add logger middleware for all endpoints
+	srv.router.Use(srv.logRequestMiddleWare)
 
 	// Public endpoints
 	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
