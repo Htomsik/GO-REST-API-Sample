@@ -1,7 +1,7 @@
 package testStore
 
 import (
-	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 )
 
@@ -34,7 +34,7 @@ func (repository *UserRepository) FindByEmail(email string) (*model.User, error)
 	user, exist := repository.users[email]
 
 	if !exist {
-		return nil, store.RecordNotFound
+		return nil, app.RecordNotFound
 	}
 
 	return user, nil

@@ -1,7 +1,7 @@
 package sqlStore_test
 
 import (
-	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/sqlStore"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +33,7 @@ func TestUserRepository_FindByEmailRandom(t *testing.T) {
 	_, err := st.User().FindByEmail("user@ex.com")
 
 	// Assert
-	assert.EqualError(t, err, store.RecordNotFound.Error())
+	assert.EqualError(t, err, app.RecordNotFound.Error())
 }
 
 func TestUserRepository_FindByEmailAdded(t *testing.T) {

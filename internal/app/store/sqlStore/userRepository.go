@@ -2,7 +2,7 @@ package sqlStore
 
 import (
 	"database/sql"
-	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
 )
 
@@ -43,7 +43,7 @@ func (repository *UserRepository) FindByEmail(email string) (*model.User, error)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			err = store.RecordNotFound
+			err = app.RecordNotFound
 		}
 	}
 

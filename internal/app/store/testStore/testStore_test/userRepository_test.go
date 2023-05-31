@@ -1,7 +1,7 @@
 package testStore_test
 
 import (
-	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/testStore"
 
 	"github.com/Htomsik/GO-REST-API-Sample/internal/model"
@@ -26,7 +26,7 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	email := "user@ex.com"
 	_, err := st.User().FindByEmail(email)
 
-	assert.EqualError(t, err, store.RecordNotFound.Error())
+	assert.EqualError(t, err, app.RecordNotFound.Error())
 
 	// Создание + Провекра на то что находит юзера
 	user := model.TestUser(t)
