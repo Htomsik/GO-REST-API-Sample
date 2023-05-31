@@ -1,0 +1,50 @@
+package testStore
+
+import (
+	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
+)
+
+// UserRepository ...
+type UserRepository struct {
+	store *Store
+	users map[int]*model.User
+}
+
+// Add ...
+func (repository *UserRepository) Add(user *model.User) error {
+	if err := user.Validate(); err != nil {
+		return err
+	}
+
+	if err := user.BeforeAdd(); err != nil {
+		return err
+	}
+
+	user.ID = len(repository.users) + 1
+
+	repository.users[user.ID] = user
+
+	return nil
+}
+
+// FindByEmail ...
+func (repository *UserRepository) FindByEmail(email string) (*model.User, error) {
+	for _, elem := range repository.users {
+		if elem.Email == email {
+			return elem, nil
+		}
+	}
+
+	return nil, model.RecordNotFound
+}
+
+// Find ...
+func (repository *UserRepository) Find(id int) (*model.User, error) {
+	user, exist := repository.users[id]
+
+	if !exist {
+		return nil, model.RecordNotFound
+	}
+
+	return user, nil
+}

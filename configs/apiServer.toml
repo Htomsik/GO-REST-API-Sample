@@ -1,0 +1,7 @@
+port = ":3030"
+logLevel = "debug"
+
+databaseType = "postgres"
+databaseURL = "host=localhost dbname=dev-RESTAPISample user=devUser password=devUser sslmode=disable"
+
+sessionKey = "TESTKEY_64A1CD5D1CAE3D963198A5B6DEBBF3EFA7889BFCE719655BAF38415D19"
