@@ -22,7 +22,7 @@ func TestUserRepository_Add(t *testing.T) {
 	assert.NotZero(t, user.ID)
 }
 
-func TestUserRepository_FindByEmailRandom(t *testing.T) {
+func TestUserRepository_FindByEmailNotAdded(t *testing.T) {
 	// Arrange
 	db, teardown := sqlStore.TestDb(t, databaseType, databaseURL)
 	defer teardown("users")
@@ -41,11 +41,39 @@ func TestUserRepository_FindByEmailAdded(t *testing.T) {
 	defer teardown("users")
 	st := sqlStore.New(db)
 	user := model.TestUser(t)
-	user.Email = "user@ex.com"
 
 	// Act
 	st.User().Add(user)
 	user, err := st.User().FindByEmail(user.Email)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+}
+
+func TestUserRepository_FindNotAdded(t *testing.T) {
+	// Arrange
+	db, teardown := sqlStore.TestDb(t, databaseType, databaseURL)
+	defer teardown("users")
+	st := sqlStore.New(db)
+
+	// Act
+	_, err := st.User().Find(0)
+
+	// Assert
+	assert.EqualError(t, err, model.RecordNotFound.Error())
+}
+
+func TestUserRepository_Find(t *testing.T) {
+	// Arrange
+	db, teardown := sqlStore.TestDb(t, databaseType, databaseURL)
+	defer teardown("users")
+	st := sqlStore.New(db)
+	user := model.TestUser(t)
+
+	// Act
+	st.User().Add(user)
+	user, err := st.User().Find(user.ID)
 
 	// Assert
 	assert.NoError(t, err)

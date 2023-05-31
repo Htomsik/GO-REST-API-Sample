@@ -22,7 +22,7 @@ func (store *Store) User() store.UserRepository {
 
 	store.userRepository = &UserRepository{
 		store: store,
-		users: make(map[string]*model.User),
+		users: make(map[int]*model.User),
 	}
 
 	return store.userRepository
