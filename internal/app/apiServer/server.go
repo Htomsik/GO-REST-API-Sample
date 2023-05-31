@@ -15,6 +15,12 @@ const (
 	homeEndpoint     = "/"
 )
 
+// Account endpoints
+const (
+	accountEndPoint       = "/account"
+	accountWhoAmIEndPoint = "/whoami"
+)
+
 // server ...
 type server struct {
 	router       *mux.Router
@@ -40,6 +46,11 @@ func newServer(store store.Store, sessionStore sessions.Store) *server {
 func (srv *server) configureRouter() {
 	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
 	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
+
+	// Account endPoints with authentication middleware
+	private := srv.router.PathPrefix(accountEndPoint).Subrouter()
+	private.Use(srv.authenticateUserMiddleWare)
+	private.HandleFunc(accountWhoAmIEndPoint, srv.handleWhoAmI()).Methods(http.MethodGet)
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {

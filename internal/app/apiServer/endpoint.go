@@ -80,3 +80,9 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 		srv.respond(w, r, http.StatusOK, nil)
 	}
 }
+
+func (srv *server) handleWhoAmI() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		srv.respond(writer, request, http.StatusOK, request.Context().Value(ctxKeyUser).(*model.User))
+	}
+}
