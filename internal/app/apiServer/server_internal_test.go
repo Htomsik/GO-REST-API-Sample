@@ -1,6 +1,8 @@
 package apiServer
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/testStore"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -10,13 +12,50 @@ import (
 
 func TestServer_HandeUsersAdd(t *testing.T) {
 	// Arrange
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, "/users", nil)
-	server := newServer(testStore.New())
+	srv := newServer(testStore.New())
+
+	testCases := []struct {
+		name         string
+		payload      interface{}
+		expectedCode int
+	}{
+		{
+			name: "valid",
+			payload: map[string]string{
+				"email":    "ex@ex.com",
+				"password": "password",
+			},
+			expectedCode: http.StatusCreated,
+		},
+		{
+			name:         "invalid payload",
+			payload:      "nonePayload",
+			expectedCode: http.StatusBadRequest,
+		},
+		{
+			name: "invalid payload params",
+			payload: map[string]string{
+				"email": "notEmail",
+			},
+			expectedCode: http.StatusUnprocessableEntity,
+		},
+	}
 
 	// Act
-	server.ServeHTTP(recorder, request)
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			recorder := httptest.NewRecorder()
 
-	// Assert
-	assert.Equal(t, recorder.Code, http.StatusOK)
+			bytesPayload := &bytes.Buffer{}
+			json.NewEncoder(bytesPayload).Encode(testCase.payload)
+
+			request, _ := http.NewRequest(http.MethodPost, "/users", bytesPayload)
+
+			srv.ServeHTTP(recorder, request)
+
+			// Assert
+			assert.Equal(t, testCase.expectedCode, recorder.Code)
+		})
+	}
+
 }

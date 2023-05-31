@@ -8,10 +8,10 @@ import (
 
 // User ...
 type User struct {
-	ID                int
-	Email             string
-	Password          string
-	EncryptedPassword string
+	ID                int    `json:"id"`
+	Email             string `json:"email"`
+	Password          string `json:"password,omitempty"`
+	EncryptedPassword string `json:"-"`
 }
 
 // Validate ...
@@ -36,6 +36,11 @@ func (user *User) BeforeAdd() error {
 	}
 
 	return nil
+}
+
+// ClearPrivate cleaning private data before push
+func (user *User) ClearPrivate() {
+	user.Password = ""
 }
 
 // encryptString
