@@ -3,6 +3,7 @@ package apiServer
 import (
 	"encoding/json"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -44,6 +45,10 @@ func newServer(store store.Store, sessionStore sessions.Store) *server {
 }
 
 func (srv *server) configureRouter() {
+	// Add access with different domains
+	srv.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
+
+	// Public endpoints
 	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
 	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
 
