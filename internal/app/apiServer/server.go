@@ -4,23 +4,26 @@ import (
 	"encoding/json"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 // server ...
 type server struct {
-	router *mux.Router
-	logger *logrus.Logger
-	store  store.Store
+	router       *mux.Router
+	logger       *logrus.Logger
+	store        store.Store
+	sessionStore sessions.Store
 }
 
 // newServer ...
-func newServer(store store.Store) *server {
+func newServer(store store.Store, sessionStore sessions.Store) *server {
 	srv := &server{
-		router: mux.NewRouter(),
-		logger: logrus.New(),
-		store:  store,
+		router:       mux.NewRouter(),
+		logger:       logrus.New(),
+		store:        store,
+		sessionStore: sessionStore,
 	}
 
 	srv.configureRouter()
@@ -30,6 +33,7 @@ func newServer(store store.Store) *server {
 
 func (srv *server) configureRouter() {
 	srv.router.HandleFunc("/users", srv.handleUsersAdd()).Methods(http.MethodPost)
+	srv.router.HandleFunc("/sessions", srv.handleSessionsAdd()).Methods(http.MethodPost)
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {

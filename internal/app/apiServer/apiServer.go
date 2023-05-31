@@ -3,6 +3,7 @@ package apiServer
 import (
 	"database/sql"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/sqlStore"
+	"github.com/gorilla/sessions"
 	"net/http"
 )
 
@@ -16,7 +17,9 @@ func Start(config *Config) error {
 
 	defer db.Close()
 	store := sqlStore.New(db)
-	srv := newServer(store)
+	sessionStore := sessions.NewCookieStore([]byte(config.SessionsKey))
+
+	srv := newServer(store, sessionStore)
 
 	srv.logger.Infof("Server started on port %v", config.Port)
 

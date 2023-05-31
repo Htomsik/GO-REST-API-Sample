@@ -6,6 +6,7 @@ type Config struct {
 	LogLevel     string `toml:"logLevel"`
 	DatabaseType string `toml:"databaseType"`
 	DatabaseURL  string `toml:"databaseURL"`
+	SessionsKey  string `toml:"sessionKey"`
 }
 
 // NewConfig ...

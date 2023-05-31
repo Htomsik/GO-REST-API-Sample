@@ -43,6 +43,11 @@ func (user *User) ClearPrivate() {
 	user.Password = ""
 }
 
+// ComparePassword compare hashed password in the database and passed password
+func (user *User) ComparePassword(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) == nil
+}
+
 // encryptString
 func encryptString(text string) (string, error) {
 	encryptedText, err := bcrypt.GenerateFromPassword([]byte(text), bcrypt.MinCost)
