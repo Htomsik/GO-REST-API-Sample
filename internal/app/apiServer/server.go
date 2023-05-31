@@ -48,6 +48,9 @@ func (srv *server) configureRouter() {
 	// Add access with different domains
 	srv.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 
+	// Add requestID for all endpoints
+	srv.router.Use(srv.setRequestIDMiddleWare)
+
 	// Public endpoints
 	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
 	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
@@ -67,7 +70,7 @@ func (srv *server) error(writer http.ResponseWriter, request *http.Request, code
 	srv.respond(writer, request, code, map[string]string{"error": err.Error()})
 }
 
-// respond respond on request
+// respond on request
 func (srv *server) respond(writer http.ResponseWriter, request *http.Request, code int, data interface{}) {
 	writer.WriteHeader(code)
 
