@@ -15,8 +15,7 @@ const migrationsPath = "file://migrations"
 
 // Start ...
 func Start(config *Config) error {
-	db, err := newDB(config.DatabaseType, config.DatabaseURL)
-
+	db, err := newDB(config.DatabaseType, config.DatabaseURL, config.DatabaseAutoMigration)
 	if err != nil {
 		return err
 	}
@@ -33,17 +32,28 @@ func Start(config *Config) error {
 }
 
 // newDB ...
-func newDB(databaseType string, databaseUrl string) (*sql.DB, error) {
-	db, err := sql.Open(databaseType, databaseUrl)
+func newDB(dbType, dbBaseURL string, dbAutoMigrations bool) (*sql.DB, error) {
+	db, err := sql.Open(dbType, dbBaseURL)
 
 	if err != nil {
 		return nil, err
 	}
 
+	if dbAutoMigrations {
+		if err := migrateDB(db, dbType); err != nil {
+			return nil, err
+		}
+	}
+
+	return db, db.Ping()
+}
+
+// migrateDB ...
+func migrateDB(db *sql.DB, databaseType string) error {
 	driver, err := sqlite3.WithInstance(db, &sqlite3.Config{})
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	migration, err := migrate.NewWithDatabaseInstance(
@@ -53,12 +63,12 @@ func newDB(databaseType string, databaseUrl string) (*sql.DB, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
-		return nil, err
+		return err
 	}
 
-	return db, db.Ping()
+	return nil
 }
