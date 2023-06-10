@@ -79,3 +79,18 @@ func TestUserRepository_Find(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
 }
+
+func TestUserRepository_Deactivate(t *testing.T) {
+	// Arrange
+	db, teardown := sqlStore.TestDb(t, databaseType, databaseURL)
+	defer teardown("users")
+	st := sqlStore.New(db)
+	user := model.TestUser(t)
+
+	// Assert
+	st.User().Add(user)
+	err := st.User().Deactivate(user.ID)
+
+	// Assert
+	assert.NoError(t, err)
+}

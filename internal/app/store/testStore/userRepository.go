@@ -22,6 +22,8 @@ func (repository *UserRepository) Add(user *model.User) error {
 
 	user.ID = len(repository.users) + 1
 
+	user.Active = true
+
 	repository.users[user.ID] = user
 
 	return nil
@@ -47,4 +49,19 @@ func (repository *UserRepository) Find(id int) (*model.User, error) {
 	}
 
 	return user, nil
+}
+
+// Deactivate ...
+func (repository *UserRepository) Deactivate(id int) error {
+	user, exist := repository.users[id]
+
+	if !exist {
+		return model.RecordNotFound
+	}
+
+	user.Active = false
+
+	repository.users[user.ID] = user
+
+	return nil
 }

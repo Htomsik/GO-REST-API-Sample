@@ -54,12 +54,13 @@ func (repository *UserRepository) Find(id int) (*model.User, error) {
 	user := &model.User{}
 
 	err := repository.store.db.QueryRow(
-		"SELECT id,email,encryptedPassword FROM users WHERE id = $1",
+		"SELECT id,email,encryptedPassword, active FROM users WHERE id = $1",
 		id,
 	).Scan(
 		&user.ID,
 		&user.Email,
 		&user.EncryptedPassword,
+		&user.Active,
 	)
 
 	if err != nil {
@@ -69,4 +70,22 @@ func (repository *UserRepository) Find(id int) (*model.User, error) {
 	}
 
 	return user, err
+}
+
+// Deactivate ...
+func (repository *UserRepository) Deactivate(id int) error {
+
+	err := repository.store.db.QueryRow(
+		"UPDATE users SET	active = $1 WHERE id = $2 RETURNING id",
+		false,
+		id,
+	).Scan(&id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = model.RecordNotFound
+		}
+	}
+
+	return err
 }
