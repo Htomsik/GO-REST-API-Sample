@@ -3,8 +3,10 @@ package apiServer
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/model"
 	"github.com/Htomsik/GO-REST-API-Sample/internal/app/store/testStore"
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -127,4 +129,32 @@ func TestServer_HandeSessions(t *testing.T) {
 		})
 	}
 
+}
+
+func TestServer_HandeAccountDeactivate(t *testing.T) {
+	// Arrange
+	user := model.TestUser(t)
+
+	store := testStore.New()
+	store.User().Add(user)
+
+	userCookie := map[interface{}]interface{}{
+		userIdSessionValue: user.ID,
+	}
+
+	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
+
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPut, accountActiveEndpoint+accountDeactivateEndpoint, nil)
+
+	// Set encrypted auth cookie
+	sc := securecookie.New(testCookieSecretKey, nil)
+	cookie, _ := sc.Encode(sessionName, userCookie)
+	request.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookie))
+
+	// Act
+	srv.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, recorder.Code)
 }
