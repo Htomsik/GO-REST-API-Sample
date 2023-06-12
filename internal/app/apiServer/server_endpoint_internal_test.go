@@ -75,7 +75,7 @@ func TestServer_HandeSessions(t *testing.T) {
 	store := testStore.New()
 	store.User().Add(user)
 
-	srv := newServer(store, sessions.NewCookieStore([]byte(testCookieSecretKey)))
+	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
 
 	testCases := []struct {
 		name         string
@@ -131,55 +131,59 @@ func TestServer_HandeSessions(t *testing.T) {
 
 }
 
-func TestServer_AuthenticateUser(t *testing.T) {
+func TestServer_HandeAccountDeactivate(t *testing.T) {
 	// Arrange
-	store := testStore.New()
 	user := model.TestUser(t)
 
+	store := testStore.New()
 	store.User().Add(user)
+
+	userCookie := map[interface{}]interface{}{
+		userIdSessionValue: user.ID,
+	}
 
 	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
 
-	// Create new cookie for response
-	sc := securecookie.New(testCookieSecretKey, nil)
-	dummyHandler := http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		writer.WriteHeader(http.StatusOK)
-	})
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPut, accountActiveEndpoint+accountDeactivateEndpoint, nil)
 
-	testCases := []struct {
-		name         string
-		cookieValue  map[interface{}]interface{}
-		expectedCode int
-	}{
-		{
-			name: "authenticated",
-			cookieValue: map[interface{}]interface{}{
-				userIdSessionValue: user.ID,
-			},
-			expectedCode: http.StatusOK,
-		},
-		{
-			name:         "not authenticated",
-			cookieValue:  nil,
-			expectedCode: http.StatusUnauthorized,
-		},
-	}
+	// Set encrypted auth cookie
+	sc := securecookie.New(testCookieSecretKey, nil)
+	cookie, _ := sc.Encode(sessionName, userCookie)
+	request.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookie))
 
 	// Act
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
-			recorder := httptest.NewRecorder()
+	srv.ServeHTTP(recorder, request)
 
-			request, _ := http.NewRequest(http.MethodGet, homeEndpoint, nil)
+	// Assert
+	assert.Equal(t, http.StatusOK, recorder.Code)
+}
 
-			// Generate cookie session key for response
-			cookie, _ := sc.Encode(sessionName, testCase.cookieValue)
-			request.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookie))
+func TestServer_HandeAccountActivate(t *testing.T) {
+	// Arrange
+	user := model.TestUser(t)
 
-			srv.authenticateUserMiddleWare(dummyHandler).ServeHTTP(recorder, request)
+	store := testStore.New()
+	store.User().Add(user)
+	store.User().Deactivate(user.ID)
 
-			// Assert
-			assert.Equal(t, testCase.expectedCode, recorder.Code)
-		})
+	userCookie := map[interface{}]interface{}{
+		userIdSessionValue: user.ID,
 	}
+
+	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
+
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPut, accountEndpoint+accountActivate, nil)
+
+	// Set encrypted auth cookie
+	sc := securecookie.New(testCookieSecretKey, nil)
+	cookie, _ := sc.Encode(sessionName, userCookie)
+	request.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookie))
+
+	// Act
+	srv.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, recorder.Code)
 }

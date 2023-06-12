@@ -1,5 +1,5 @@
 CREATE TABLE users(
-    id bigserial not null  primary key,
+    id integer primary key autoincrement,
     email varchar not null unique,
     encryptedPassword varchar not null
 );

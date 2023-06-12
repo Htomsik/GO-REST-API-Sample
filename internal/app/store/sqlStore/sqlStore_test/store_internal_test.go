@@ -15,11 +15,12 @@ func TestMain(m *testing.M) {
 	databaseType = os.Getenv("DATABASE_TYPE")
 
 	if databaseURL == "" {
-		databaseURL = "host=localhost dbname=test-RESTAPISample user=devUser password=devUser sslmode=disable"
+		// TODO найти инфу как правильно указывать пути в go
+		databaseURL = "../../../../../assets/db/test-store.db"
 	}
 
 	if databaseType == "" {
-		databaseType = "postgres"
+		databaseType = "sqlite3"
 	}
 
 	os.Exit(m.Run())
