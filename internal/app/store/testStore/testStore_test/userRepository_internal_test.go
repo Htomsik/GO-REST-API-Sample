@@ -87,3 +87,18 @@ func TestUserRepository_Deactivate(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, user.Active)
 }
+
+func TestUserRepository_Activate(t *testing.T) {
+	// Arrange
+	st := testStore.New()
+	user := model.TestUser(t)
+
+	// Act
+	st.User().Add(user)
+	err := st.User().Activate(user.ID)
+	user, _ = st.User().Find(user.ID)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.True(t, user.Active)
+}

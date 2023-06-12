@@ -158,3 +158,32 @@ func TestServer_HandeAccountDeactivate(t *testing.T) {
 	// Assert
 	assert.Equal(t, http.StatusOK, recorder.Code)
 }
+
+func TestServer_HandeAccountActivate(t *testing.T) {
+	// Arrange
+	user := model.TestUser(t)
+
+	store := testStore.New()
+	store.User().Add(user)
+	store.User().Deactivate(user.ID)
+
+	userCookie := map[interface{}]interface{}{
+		userIdSessionValue: user.ID,
+	}
+
+	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
+
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPut, accountEndpoint+accountActivate, nil)
+
+	// Set encrypted auth cookie
+	sc := securecookie.New(testCookieSecretKey, nil)
+	cookie, _ := sc.Encode(sessionName, userCookie)
+	request.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookie))
+
+	// Act
+	srv.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(t, http.StatusOK, recorder.Code)
+}

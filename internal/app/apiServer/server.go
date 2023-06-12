@@ -48,6 +48,7 @@ func (srv *server) configureRouter() {
 
 	srv.configureOtherEndpoints()
 	srv.configureAccountEndpoint()
+	srv.configureAccountActiveEndpoints()
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {

@@ -89,3 +89,21 @@ func (repository *UserRepository) Deactivate(id int) error {
 
 	return err
 }
+
+// Activate ...
+func (repository *UserRepository) Activate(id int) error {
+
+	err := repository.store.db.QueryRow(
+		"UPDATE users SET	active = $1 WHERE id = $2 RETURNING id",
+		true,
+		id,
+	).Scan(&id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = model.RecordNotFound
+		}
+	}
+
+	return err
+}

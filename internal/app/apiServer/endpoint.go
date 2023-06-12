@@ -87,11 +87,23 @@ func (srv *server) handleWhoAmI() http.HandlerFunc {
 	}
 }
 
-func (srv *server) handleAccountDeactivate() http.HandlerFunc {
+func (srv *server) handleAccountActiveDeactivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value(ctxKeyUser)
+		user := r.Context().Value(ctxKeyUser).(*model.User)
 
-		if err := srv.store.User().Deactivate(user.(*model.User).ID); err != nil {
+		if err := srv.store.User().Deactivate(user.ID); err != nil {
+			srv.error(w, r, http.StatusUnprocessableEntity, err)
+		}
+
+		srv.respond(w, r, http.StatusOK, nil)
+	}
+}
+
+func (srv *server) handleAccountActivate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(ctxKeyUser).(*model.User)
+
+		if err := srv.store.User().Activate(user.ID); err != nil {
 			srv.error(w, r, http.StatusUnprocessableEntity, err)
 		}
 

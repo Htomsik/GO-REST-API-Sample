@@ -61,7 +61,18 @@ func (repository *UserRepository) Deactivate(id int) error {
 
 	user.Active = false
 
-	repository.users[user.ID] = user
+	return nil
+}
+
+// Activate ...
+func (repository *UserRepository) Activate(id int) error {
+	user, exist := repository.users[id]
+
+	if !exist {
+		return model.RecordNotFound
+	}
+
+	user.Active = true
 
 	return nil
 }

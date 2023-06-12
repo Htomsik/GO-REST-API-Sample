@@ -10,4 +10,5 @@ type UserRepository interface {
 	FindByEmail(email string) (*model.User, error)
 	Find(id int) (*model.User, error)
 	Deactivate(id int) error
+	Activate(id int) error
 }
