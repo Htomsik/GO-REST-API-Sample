@@ -11,15 +11,7 @@ import (
 )
 
 const (
-	usersEndpoint    = "/users"
-	sessionsEndpoint = "/sessions"
-	homeEndpoint     = "/"
-)
-
-// Account endpoints
-const (
-	accountEndPoint       = "/account"
-	accountWhoAmIEndPoint = "/whoami"
+	homeEndpoint = "/"
 )
 
 // server ...
@@ -54,14 +46,9 @@ func (srv *server) configureRouter() {
 	// Add logger middleware for all endpoints
 	srv.router.Use(srv.logRequestMiddleWare)
 
-	// Public endpoints
-	srv.router.HandleFunc(usersEndpoint, srv.handleUsersAdd()).Methods(http.MethodPost)
-	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
-
-	// Account endPoints with authentication middleware
-	private := srv.router.PathPrefix(accountEndPoint).Subrouter()
-	private.Use(srv.authenticateUserMiddleWare)
-	private.HandleFunc(accountWhoAmIEndPoint, srv.handleWhoAmI()).Methods(http.MethodGet)
+	srv.configureOtherEndpoints()
+	srv.configureAccountEndpoint()
+	srv.configureAccountActiveEndpoints()
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {

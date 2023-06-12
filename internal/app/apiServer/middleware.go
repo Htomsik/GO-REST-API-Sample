@@ -50,6 +50,25 @@ func (srv *server) authenticateUserMiddleWare(next http.Handler) http.Handler {
 	})
 }
 
+func (srv *server) activeUserMiddleWare(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+
+		user := request.Context().Value(ctxKeyUser)
+
+		if user == nil {
+			srv.error(writer, request, http.StatusInternalServerError, model.ContextNotFound)
+			return
+		}
+
+		if !user.(*model.User).Active {
+			srv.error(writer, request, http.StatusUnauthorized, model.NotActive)
+			return
+		}
+
+		next.ServeHTTP(writer, request)
+	})
+}
+
 func (srv *server) requestIDMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		// Generate new guid
