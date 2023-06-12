@@ -1,6 +1,9 @@
 package apiServer
 
-import "net/http"
+import (
+	"github.com/gorilla/mux"
+	"net/http"
+)
 
 // Account endpoints
 const (
@@ -15,8 +18,9 @@ const (
 
 // Account/Active endpoints
 const (
-	accountActiveEndpoint = accountEndpoint + "/active"
-	accountWhoAmIEndpoint = accountActiveEndpoint + "/whoami"
+	accountActiveEndpoint     = accountEndpoint + "/active"
+	accountWhoAmIEndpoint     = "/whoami"
+	accountDeactivateEndpoint = "/deactivate"
 )
 
 // configureOtherEndpoints public endpoints
@@ -29,12 +33,16 @@ func (srv *server) configureOtherEndpoints() {
 func (srv *server) configureAccountEndpoint() {
 	account := srv.router.PathPrefix(accountEndpoint).Subrouter()
 	account.Use(srv.authenticateUserMiddleWare)
+
+	srv.configureAccountActiveEndpoints(account)
 }
 
 // configureAccountActiveEndpoints Account endpoints with authentication + active middleware
-func (srv *server) configureAccountActiveEndpoints() {
+func (srv *server) configureAccountActiveEndpoints(router *mux.Router) {
 	accountActive := srv.router.PathPrefix(accountActiveEndpoint).Subrouter()
+	accountActive.Use(srv.authenticateUserMiddleWare)
 	accountActive.Use(srv.activeUserMiddleWare)
 
-	srv.router.HandleFunc(accountWhoAmIEndpoint, srv.handleWhoAmI()).Methods(http.MethodGet)
+	accountActive.HandleFunc(accountWhoAmIEndpoint, srv.handleWhoAmI()).Methods(http.MethodGet)
+	accountActive.HandleFunc(accountDeactivateEndpoint, srv.handleAccountDeactivate()).Methods(http.MethodPut)
 }

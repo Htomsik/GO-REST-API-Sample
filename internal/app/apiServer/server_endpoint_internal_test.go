@@ -73,7 +73,7 @@ func TestServer_HandeSessions(t *testing.T) {
 	store := testStore.New()
 	store.User().Add(user)
 
-	srv := newServer(store, sessions.NewCookieStore([]byte(testCookieSecretKey)))
+	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
 
 	testCases := []struct {
 		name         string
