@@ -18,8 +18,10 @@ const (
 
 // Account endpoints
 const (
-	accountEndPoint       = "/account"
-	accountWhoAmIEndPoint = "/whoami"
+	accountEndPoint           = "/account"
+	accountActiveEndPoint     = "/active"
+	accountWhoAmIEndPoint     = "/whoami"
+	accountDeactivateEndPoint = "/deactivate"
 )
 
 // server ...
@@ -59,9 +61,14 @@ func (srv *server) configureRouter() {
 	srv.router.HandleFunc(sessionsEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
 
 	// Account endPoints with authentication middleware
-	private := srv.router.PathPrefix(accountEndPoint).Subrouter()
-	private.Use(srv.authenticateUserMiddleWare)
-	private.HandleFunc(accountWhoAmIEndPoint, srv.handleWhoAmI()).Methods(http.MethodGet)
+	account := srv.router.PathPrefix(accountEndPoint).Subrouter()
+	account.Use(srv.authenticateUserMiddleWare)
+
+	// Account endPoints with authentication middleware
+	accountActive := srv.router.PathPrefix(accountEndPoint + accountActiveEndPoint).Subrouter()
+	accountActive.Use(srv.activeUserMiddleWare)
+
+	accountActive.HandleFunc(accountWhoAmIEndPoint, srv.handleWhoAmI()).Methods(http.MethodGet)
 }
 
 func (srv *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
