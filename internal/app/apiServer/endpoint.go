@@ -18,6 +18,7 @@ func (srv *server) handleUsersAdd() http.HandlerFunc {
 		Password string `json:"password"`
 	}
 
+func (srv *server) handleAccountAdd() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decode request
 		req := &request{}
@@ -81,13 +82,13 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 	}
 }
 
-func (srv *server) handleWhoAmI() http.HandlerFunc {
+func (srv *server) handleWho() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		srv.respond(writer, request, http.StatusOK, request.Context().Value(ctxKeyUser).(*model.User))
 	}
 }
 
-func (srv *server) handleAccountActiveDeactivate() http.HandlerFunc {
+func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(ctxKeyUser).(*model.User)
 
