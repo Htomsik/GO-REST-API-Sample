@@ -15,6 +15,12 @@ type User struct {
 	Active            bool   `json:"-"`
 }
 
+// UserShort short version for request
+type UserShort struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 // Validate ...
 func (user *User) Validate() error {
 	return val.ValidateStruct(

@@ -11,17 +11,22 @@ const (
 	userIdSessionValue = "userId"
 )
 
-// handleUsersAdd Add new user
-func (srv *server) handleUsersAdd() http.HandlerFunc {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
+// handleAccountAdd Create Account
+// @Summary      Add account
+// @Description  Create new account
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Param		 User 	body 		model.UserShort 	true 	"user information"
+// @Success      201  	{object} 	model.User
+// @Failure      422
+// @Failure      400
+// @Router       /account [post]
 func (srv *server) handleAccountAdd() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decode request
-		req := &request{}
+		req := &model.UserShort{}
+
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			srv.error(w, r, http.StatusBadRequest, err)
 			return
@@ -43,16 +48,22 @@ func (srv *server) handleAccountAdd() http.HandlerFunc {
 	}
 }
 
-// handleSessionsAdd Add new user session
+// handleSessionsAdd Authorize
+// @Summary      Authorize into account
+// @Description  Authorize into account
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Param		 User 	body	model.UserShort 	true 	"user information"
+// @Failure      401
+// @Failure      400
+// @Failure      500
+// @Success      200
+// @Router       /account/session [post]
 func (srv *server) handleSessionsAdd() http.HandlerFunc {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decode request
-		req := &request{}
+		req := &model.UserShort{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			srv.error(w, r, http.StatusBadRequest, err)
 			return
@@ -82,11 +93,32 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 	}
 }
 
+// handleWho info about current authorised user
+// @Summary      Account info
+// @Description  info about current user
+// @Tags         Account/Active
+// @Accept       json
+// @Produce      json
+// @Success      200	{object}	model.User
+// @Failure      401
+// @Router       /account/active/who [get]
+
 func (srv *server) handleWho() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		srv.respond(writer, request, http.StatusOK, request.Context().Value(ctxKeyUser).(*model.User))
 	}
 }
+
+// handleAccountDeactivate deactivate current active account
+// @Summary      Deactivate account
+// @Description  Only deactivate, not delete
+// @Tags         Account/Active
+// @Accept       json
+// @Produce      json
+// @Success      200
+// @Failure      422
+// @Failure      401
+// @Router       /account/active/deactivate [post]
 
 func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +132,16 @@ func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 	}
 }
 
+// handleAccountActivate activate nonactive account
+// @Summary      Activate account
+// @Description  Activate only deactivated accounts
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Param		 User 	body	model.UserShort 	true 	"user information"
+// @Success      200
+// @Failure      422
+// @Router       /account/activate [post]
 func (srv *server) handleAccountActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(ctxKeyUser).(*model.User)
