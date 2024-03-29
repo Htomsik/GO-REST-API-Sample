@@ -15,7 +15,7 @@ func init() {
 	flag.StringVar(&cfgPath, "config-path", "configs/apiServer.toml", "path to cfg file")
 }
 
-// @ title 			GO-REST-API-Sample
+// @ title 			Simple site GO
 // @version         1.0
 
 // @host      localhost:8080
