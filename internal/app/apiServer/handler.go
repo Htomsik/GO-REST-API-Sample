@@ -11,7 +11,12 @@ import (
 const (
 	accountEndpoint         = "/account"
 	accountActivateEndpoint = "/activate"
-	accountSessionEndpoint  = "/session"
+)
+
+// users endpoints
+const (
+	userEndPoint  = "/user"
+	userAuthorize = "/authorize"
 )
 
 // Account/Active endpoints
@@ -29,10 +34,17 @@ func (srv *server) configureOtherEndpoints() {
 // configureAccountEndpoint Account endpoints with authentication middleware
 func (srv *server) configureAccountEndpoint() {
 	account := srv.router.PathPrefix(accountEndpoint).Subrouter()
+	account.Use(srv.authenticateUserMiddleWare)
 
 	account.HandleFunc(accountActivateEndpoint, srv.handleAccountActivate()).Methods(http.MethodPut)
-	account.HandleFunc("", srv.handleAccountAdd()).Methods(http.MethodPost)
-	account.HandleFunc(accountSessionEndpoint, srv.handleSessionsAdd()).Methods(http.MethodPost)
+}
+
+// configureUserEndpoint user endpoints for create/authorize
+func (srv *server) configureUserEndpoint() {
+	user := srv.router.PathPrefix(userEndPoint).Subrouter()
+
+	user.HandleFunc("", srv.handleUserAdd()).Methods(http.MethodPost)
+	user.HandleFunc(userAuthorize, srv.handleUserSessionAdd()).Methods(http.MethodPost)
 }
 
 // configureAccountActiveEndpoints Account endpoints with authentication + active middleware

@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account": {
-            "post": {
-                "description": "Create new account",
+        "/account/activate": {
+            "put": {
+                "description": "Activate only deactivated accounts",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,7 +27,82 @@ const docTemplate = `{
                 "tags": [
                     "Account"
                 ],
-                "summary": "Add account",
+                "summary": "Activate account",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/account/active/deactivate": {
+            "put": {
+                "description": "Only deactivate, not delete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Deactivate account",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/account/active/who": {
+            "get": {
+                "description": "info about current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Account info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "description": "Create new account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add account/User",
                 "parameters": [
                     {
                         "description": "user information",
@@ -55,9 +130,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/account/activate": {
+        "/user/authorize": {
             "post": {
-                "description": "Activate only deactivated accounts",
+                "description": "Authorize into account by session cookie",
                 "consumes": [
                     "application/json"
                 ],
@@ -65,93 +140,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Account"
-                ],
-                "summary": "Activate account",
-                "parameters": [
-                    {
-                        "description": "user information",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.UserShort"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity"
-                    }
-                }
-            }
-        },
-        "/account/active/deactivate": {
-            "post": {
-                "description": "Only deactivate, not delete",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account/Active"
-                ],
-                "summary": "Deactivate account",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity"
-                    }
-                }
-            }
-        },
-        "/account/active/who": {
-            "get": {
-                "description": "info about current user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account/Active"
-                ],
-                "summary": "Account info",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.User"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/account/session": {
-            "post": {
-                "description": "Authorize into account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
+                    "User"
                 ],
                 "summary": "Authorize into account",
                 "parameters": [

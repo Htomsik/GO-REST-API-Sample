@@ -21,7 +21,56 @@ info:
   contact: {}
   version: "1.0"
 paths:
-  /account:
+  /account/activate:
+    put:
+      consumes:
+      - application/json
+      description: Activate only deactivated accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+      summary: Activate account
+      tags:
+      - Account
+  /account/active/deactivate:
+    put:
+      consumes:
+      - application/json
+      description: Only deactivate, not delete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+      summary: Deactivate account
+      tags:
+      - Account
+  /account/active/who:
+    get:
+      consumes:
+      - application/json
+      description: info about current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: Unauthorized
+      summary: Account info
+      tags:
+      - Account
+  /user:
     post:
       consumes:
       - application/json
@@ -44,70 +93,14 @@ paths:
           description: Bad Request
         "422":
           description: Unprocessable Entity
-      summary: Add account
+      summary: Add account/User
       tags:
-      - Account
-  /account/activate:
+      - User
+  /user/authorize:
     post:
       consumes:
       - application/json
-      description: Activate only deactivated accounts
-      parameters:
-      - description: user information
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/model.UserShort'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "422":
-          description: Unprocessable Entity
-      summary: Activate account
-      tags:
-      - Account
-  /account/active/deactivate:
-    post:
-      consumes:
-      - application/json
-      description: Only deactivate, not delete
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "401":
-          description: Unauthorized
-        "422":
-          description: Unprocessable Entity
-      summary: Deactivate account
-      tags:
-      - Account/Active
-  /account/active/who:
-    get:
-      consumes:
-      - application/json
-      description: info about current user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.User'
-        "401":
-          description: Unauthorized
-      summary: Account info
-      tags:
-      - Account/Active
-  /account/session:
-    post:
-      consumes:
-      - application/json
-      description: Authorize into account
+      description: Authorize into account by session cookie
       parameters:
       - description: user information
         in: body
@@ -128,5 +121,5 @@ paths:
           description: Internal Server Error
       summary: Authorize into account
       tags:
-      - Account
+      - User
 swagger: "2.0"

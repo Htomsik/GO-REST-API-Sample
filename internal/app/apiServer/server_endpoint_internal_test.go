@@ -57,7 +57,7 @@ func TestServer_HandeUsersAdd(t *testing.T) {
 			bytesPayload := &bytes.Buffer{}
 			json.NewEncoder(bytesPayload).Encode(testCase.payload)
 
-			request, _ := http.NewRequest(http.MethodPost, accountEndpoint, bytesPayload)
+			request, _ := http.NewRequest(http.MethodPost, userEndPoint, bytesPayload)
 
 			srv.ServeHTTP(recorder, request)
 
@@ -120,7 +120,7 @@ func TestServer_HandeSessions(t *testing.T) {
 			bytesPayload := &bytes.Buffer{}
 			json.NewEncoder(bytesPayload).Encode(testCase.payload)
 
-			request, _ := http.NewRequest(http.MethodPost, accountEndpoint+accountSessionEndpoint, bytesPayload)
+			request, _ := http.NewRequest(http.MethodPost, userEndPoint+userAuthorize, bytesPayload)
 
 			srv.ServeHTTP(recorder, request)
 
