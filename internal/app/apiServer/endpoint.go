@@ -118,7 +118,7 @@ func (srv *server) handleWho() http.HandlerFunc {
 // @Success      200
 // @Failure      422
 // @Failure      401
-// @Router       /account/active/deactivate [post]
+// @Router       /account/active/deactivate [put]
 
 func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -138,10 +138,9 @@ func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 // @Tags         Account
 // @Accept       json
 // @Produce      json
-// @Param		 User 	body	model.UserShort 	true 	"user information"
 // @Success      200
 // @Failure      422
-// @Router       /account/activate [post]
+// @Router       /account/activate [put]
 func (srv *server) handleAccountActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(ctxKeyUser).(*model.User)
