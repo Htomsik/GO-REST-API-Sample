@@ -174,6 +174,7 @@ func TestServer_HandeAccountActivate(t *testing.T) {
 	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
 
 	recorder := httptest.NewRecorder()
+
 	request, _ := http.NewRequest(http.MethodPut, accountEndpoint+accountActivateEndpoint, nil)
 
 	// Set encrypted auth cookie

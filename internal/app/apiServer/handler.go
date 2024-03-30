@@ -9,6 +9,7 @@ import (
 
 // Account endpoints
 const (
+
 	accountEndpoint         = "/account"
 	accountActivateEndpoint = "/activate"
 )
@@ -35,6 +36,7 @@ func (srv *server) configureOtherEndpoints() {
 func (srv *server) configureAccountEndpoint() {
 	account := srv.router.PathPrefix(accountEndpoint).Subrouter()
 	account.Use(srv.authenticateUserMiddleWare)
+
 
 	account.HandleFunc(accountActivateEndpoint, srv.handleAccountActivate()).Methods(http.MethodPut)
 }

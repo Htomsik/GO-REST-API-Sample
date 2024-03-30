@@ -108,6 +108,7 @@ func (srv *server) handleWho() http.HandlerFunc {
 	}
 }
 
+
 // handleAccountDeactivate deactivate current active account
 // @Summary      Deactivate account
 // @Description  Only deactivate, not delete
