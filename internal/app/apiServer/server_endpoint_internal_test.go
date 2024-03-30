@@ -57,7 +57,7 @@ func TestServer_HandeUsersAdd(t *testing.T) {
 			bytesPayload := &bytes.Buffer{}
 			json.NewEncoder(bytesPayload).Encode(testCase.payload)
 
-			request, _ := http.NewRequest(http.MethodPost, usersEndpoint, bytesPayload)
+			request, _ := http.NewRequest(http.MethodPost, userEndPoint, bytesPayload)
 
 			srv.ServeHTTP(recorder, request)
 
@@ -120,7 +120,7 @@ func TestServer_HandeSessions(t *testing.T) {
 			bytesPayload := &bytes.Buffer{}
 			json.NewEncoder(bytesPayload).Encode(testCase.payload)
 
-			request, _ := http.NewRequest(http.MethodPost, sessionsEndpoint, bytesPayload)
+			request, _ := http.NewRequest(http.MethodPost, userEndPoint+userAuthorize, bytesPayload)
 
 			srv.ServeHTTP(recorder, request)
 
@@ -174,7 +174,8 @@ func TestServer_HandeAccountActivate(t *testing.T) {
 	srv := newServer(store, sessions.NewCookieStore(testCookieSecretKey))
 
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, accountEndpoint+accountActivate, nil)
+
+	request, _ := http.NewRequest(http.MethodPut, accountEndpoint+accountActivateEndpoint, nil)
 
 	// Set encrypted auth cookie
 	sc := securecookie.New(testCookieSecretKey, nil)

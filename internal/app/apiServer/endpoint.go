@@ -11,16 +11,22 @@ const (
 	userIdSessionValue = "userId"
 )
 
-// handleUsersAdd Add new user
-func (srv *server) handleUsersAdd() http.HandlerFunc {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
+// handleUserAdd Create User
+// @Summary      Add account/User
+// @Description  Create new account
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param		 User 	body 		model.UserShort 	true 	"user information"
+// @Success      201  	{object} 	model.User
+// @Failure      422
+// @Failure      400
+// @Router       /user [post]
+func (srv *server) handleUserAdd() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decode request
-		req := &request{}
+		req := &model.UserShort{}
+
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			srv.error(w, r, http.StatusBadRequest, err)
 			return
@@ -42,16 +48,22 @@ func (srv *server) handleUsersAdd() http.HandlerFunc {
 	}
 }
 
-// handleSessionsAdd Add new user session
-func (srv *server) handleSessionsAdd() http.HandlerFunc {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
+// handleUserSessionAdd Authorize into User
+// @Summary      Authorize into account
+// @Description  Authorize into account by session cookie
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param		 User 	body	model.UserShort 	true 	"user information"
+// @Failure      401
+// @Failure      400
+// @Failure      500
+// @Success      200
+// @Router       /user/authorize [post]
+func (srv *server) handleUserSessionAdd() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decode request
-		req := &request{}
+		req := &model.UserShort{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			srv.error(w, r, http.StatusBadRequest, err)
 			return
@@ -81,13 +93,33 @@ func (srv *server) handleSessionsAdd() http.HandlerFunc {
 	}
 }
 
-func (srv *server) handleWhoAmI() http.HandlerFunc {
+// handleWho info about current authorised user
+// @Summary      Account info
+// @Description  info about current user
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Success      200	{object}	model.User
+// @Failure      401
+// @Router       /account/active/who [get]
+func (srv *server) handleWho() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		srv.respond(writer, request, http.StatusOK, request.Context().Value(ctxKeyUser).(*model.User))
 	}
 }
 
-func (srv *server) handleAccountActiveDeactivate() http.HandlerFunc {
+
+// handleAccountDeactivate deactivate current active account
+// @Summary      Deactivate account
+// @Description  Only deactivate, not delete
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Success      200
+// @Failure      422
+// @Failure      401
+// @Router       /account/active/deactivate [put]
+func (srv *server) handleAccountDeactivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(ctxKeyUser).(*model.User)
 
@@ -99,6 +131,15 @@ func (srv *server) handleAccountActiveDeactivate() http.HandlerFunc {
 	}
 }
 
+// handleAccountActivate activate nonactive account
+// @Summary      Activate account
+// @Description  Activate only deactivated accounts
+// @Tags         Account
+// @Accept       json
+// @Produce      json
+// @Success      200
+// @Failure      422
+// @Router       /account/activate [put]
 func (srv *server) handleAccountActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := r.Context().Value(ctxKeyUser).(*model.User)

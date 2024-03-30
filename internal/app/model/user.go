@@ -13,6 +13,14 @@ type User struct {
 	Password          string `json:"password,omitempty"`
 	EncryptedPassword string `json:"-"`
 	Active            bool   `json:"-"`
+  
+}
+
+// UserShort short version for request
+type UserShort struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+
 }
 
 // Validate ...
