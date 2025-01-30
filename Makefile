@@ -1,10 +1,12 @@
 .PHONY: build
 start:
-	swag init -g .\cmd\apiServer\main.go
 	go build -v ./cmd/apiServer
 	.\apiServer.exe
 
 build:
+	go build -v ./cmd/apiServer
+
+fullBuild:
 	swag init -g .\cmd\apiServer\main.go
 	go build -v ./cmd/apiServer
 
